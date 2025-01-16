@@ -1,0 +1,41 @@
+infinite loop of generating data :
+
+$endpoint = "https://api.powerbi.com/beta/ad1106cc-c3d8-47da-9e8e-bbf2a9512edd/datasets/23db798f-dc45-48f8-8868-6817f898d81f/rows?experience=power-bi&key=hueOGNPwdLyUM65wKXo6Cqu6of4qVgw5knCqEFd9qLNGO%2FzQFFQXINwuLC4TK0oCxZUc04hOmsLFrtNGcPSrZg%3D%3D"
+
+while ($true) {
+
+    $ComputerCPU = (Get-WmiObject  -Class win32_processor -ErrorAction Stop | Measure-Object -Property LoadPercentage -Average | Select-Object Average).Average
+
+    $ComputerMemory = Get-WmiObject  -Class win32_operatingsystem -ErrorAction Stop
+    $UsedMemory = $ComputerMemory.TotalVisibleMemorySize - $ComputerMemory.FreePhysicalMemory
+    $Memory = (($UsedMemory / $ComputerMemory.TotalVisibleMemorySize) * 100)
+    $RoundMemory = [math]::Round($Memory, 2)
+
+    $DateTime = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")
+
+    #$RoundMemory
+    #$ComputerCPU 
+    #$DateTime
+
+    $payload = @{
+        "DateTime" = $DateTime
+        "CPU"      = $ComputerCPU
+        "Memory"   = $RoundMemory
+    }
+    Invoke-RestMethod -Method Post -Uri "$endpoint" -Body (ConvertTo-Json @($payload))
+
+    Write-Host "DateTime: " $DateTime " CPU: " $ComputerCPU " Memory: " $RoundMemory
+    
+    Start-Sleep 2
+}
+
+-------------------------------------------------------------------------------------------------------
+$endpoint = "https://api.powerbi.com/beta/ad1106cc-c3d8-47da-9e8e-bbf2a9512edd/datasets/23db798f-dc45-48f8-8868-6817f898d81f/rows?experience=power-bi&key=hueOGNPwdLyUM65wKXo6Cqu6of4qVgw5knCqEFd9qLNGO%2FzQFFQXINwuLC4TK0oCxZUc04hOmsLFrtNGcPSrZg%3D%3D"
+$payload = @{
+"Date" ="2025-01-16T21:11:37.867Z"
+"Time" ="2025-01-16T21:11:37.867Z"
+"CPU" =98.6
+"Memory" =98.6
+}
+Invoke-RestMethod -Method Post -Uri "$endpoint" -Body (ConvertTo-Json @($payload))
+-----------------------------------------------------------------------------------------------------------
